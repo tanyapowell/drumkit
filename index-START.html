@@ -6,8 +6,6 @@
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-
-
   <div class="keys">
     <div data-key="65" class="key">
       <kbd>A</kbd>
@@ -58,19 +56,27 @@
   <audio data-key="76" src="sounds/tink.wav"></audio>
 
 <script>
-  window.addEventListener('keydown', function(e) {
+  function playSound(e) {
     const audio = document.querySelector(`audio[data-key='${e.keyCode}']`);
     const key = document.querySelector(`.key[data-key='${e.keyCode}']`);
 
     if(!audio) return; //will stop the function from running altogether if there is no audio for that key
 
-    audio.currentTime = 0;
+    key.classList.add('playing');
+    audio.currentTime = 0; //rewind to beginning
     audio.play();
+  }
 
-    console.log(key);
-  })
+  function removeTransition(e) {
+    if(e.propertyName !== 'transform') return; // skip if not transformed
+    this.classList.remove('playing');
+  }
+
+  const keys = Array.from(document.querySelectorAll('.key'));
+  keys.forEach(key => key.addEventListener('transitionend', removeTransition));
+
+  window.addEventListener('keydown', playSound);
 </script>
-
 
 </body>
 </html>
